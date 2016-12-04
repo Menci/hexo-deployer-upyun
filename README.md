@@ -1,11 +1,11 @@
-### hexo-deployer-upyun
+# hexo-deployer-upyun
 UPYUN deployer for Hexo.
 
 ```
 npm install hexo-deployer-upyun --save
 ```
 
-### Usage
+# Usage
 Example configure:
 
 ```yaml
