@@ -1,9 +1,8 @@
 {
   "name": "hexo-deployer-upyun",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "UPYUN deployer for Hexo.",
-  "main": "index.js",
-  "// main": "compiled.js",
+  "main": "compiled.js",
   "scripts": {
     "compile": "babel index.js > compiled.js"
   },
