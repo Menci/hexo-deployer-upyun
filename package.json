@@ -1,0 +1,24 @@
+{
+  "name": "hexo-deployer-upyun",
+  "version": "0.0.1",
+  "description": "UPYUN deployer for Hexo.",
+  "main": "index.js",
+  "// main": "compiled.js",
+  "scripts": {
+    "compile": "babel index.js > compiled.js"
+  },
+  "repository": {
+    "url": "https://github.com/Menci/hexo-deployer-upyun",
+    "type": "git"
+  },
+  "author": "Menci",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-preset-es2017": "^6.16.0",
+    "bluebird": "^3.4.6",
+    "colors": "^1.1.2",
+    "md5": "^2.2.1",
+    "upyun": "^2.0.4"
+  }
+}
