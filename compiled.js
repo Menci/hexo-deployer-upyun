@@ -80,7 +80,7 @@ hexo.extend.deployer.register('upyun', (() => {
       let processRemove = (() => {
         var _ref4 = _asyncToGenerator(function* (removeList) {
           for (let file of removeList) {
-            let data = yield upyun.deleteFileAsync(file);
+            let data = yield upyun.deleteFileAsync(transformPath(file));
             if (data.statusCode === 200) {
               console.log('INFO '.green + ` Removed file ${ file.magenta } successfully`);
             } else if (data.statusCode === 404) {
@@ -103,7 +103,7 @@ hexo.extend.deployer.register('upyun', (() => {
             let try_times = parseInt(args.try_times) || 5;
             let success = false;
             while (try_times--) {
-              let data = yield upyun.removeDirAsync(dir);
+              let data = yield upyun.removeDirAsync(transformPath(dir));
               if (data.statusCode === 200) {
                 console.log('INFO '.green + ` Removed dir ${ dir.magenta } successfully`);
                 success = true;
@@ -127,10 +127,10 @@ hexo.extend.deployer.register('upyun', (() => {
       let processMkdir = (() => {
         var _ref6 = _asyncToGenerator(function* (mkdirList) {
           for (let dir of mkdirList) {
-            let data = yield upyun.makeDirAsync(dir);
+            let data = yield upyun.makeDirAsync(transformPath(dir));
             if (data.statusCode === 200) {
               console.log('INFO '.green + ` Make dir ${ dir.magenta } successfully`);
-            } else throw ['processMkdir', dir, data];
+            } else throw ['processMkdir', dir, dasta];
           }
         });
 
@@ -147,7 +147,7 @@ hexo.extend.deployer.register('upyun', (() => {
 
             let fileContent = yield fs.readFileAsync(path.resolve(public_dir, file));
 
-            let data = yield upyun.putFileAsync(file, fileContent, mimeType, true, null);
+            let data = yield upyun.putFileAsync(transformPath(file), fileContent, mimeType, true, null);
             if (data.statusCode === 200) {
               console.log('INFO '.green + ` Put file ${ file.magenta } successfully`);
             } else throw ['processPut', file, data];
@@ -283,6 +283,16 @@ hexo.extend.deployer.register('upyun', (() => {
       }
 
       let lists = getDiffList(remoteList, localList);
+
+      // If it runs under the Win32 platform, the path spliter will be `\` instead of `/`
+      // But UPYUN treat only `/` as the path spliter, so we need to replace it
+      function transformPath(file) {
+        if (process.platform === 'win32') {
+          return file.split('\\').join('/');
+        } else {
+          return file;
+        }
+      }
 
       yield processRemove(lists.removeList);
       yield processRemoveDir(lists.removeDirList);

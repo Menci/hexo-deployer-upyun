@@ -167,10 +167,20 @@ hexo.extend.deployer.register('upyun', async function (args) {
 
     let lists = getDiffList(remoteList, localList);
 
+    // If it runs under the Win32 platform, the path spliter will be `\` instead of `/`
+    // But UPYUN treat only `/` as the path spliter, so we need to replace it
+    function transformPath(file) {
+      if (process.platform === 'win32') {
+        return file.split('\\').join('/');
+      } else {
+        return file;
+      }
+    }
+
     // Process the lists
     async function processRemove(removeList) {
       for (let file of removeList) {
-        let data = await upyun.deleteFileAsync(file);
+        let data = await upyun.deleteFileAsync(transformPath(file));
         if (data.statusCode === 200) {
           console.log('INFO '.green + ` Removed file ${file.magenta} successfully`);
         } else if (data.statusCode === 404) {
@@ -187,7 +197,7 @@ hexo.extend.deployer.register('upyun', async function (args) {
         let try_times = parseInt(args.try_times) || 5;
         let success = false;
         while (try_times--) {
-          let data = await upyun.removeDirAsync(dir);
+          let data = await upyun.removeDirAsync(transformPath(dir));
           if (data.statusCode === 200) {
             console.log('INFO '.green + ` Removed dir ${dir.magenta} successfully`);
             success = true;
@@ -205,10 +215,10 @@ hexo.extend.deployer.register('upyun', async function (args) {
 
     async function processMkdir(mkdirList) {
       for (let dir of mkdirList) {
-        let data = await upyun.makeDirAsync(dir);
+        let data = await upyun.makeDirAsync(transformPath(dir));
         if (data.statusCode === 200) {
           console.log('INFO '.green + ` Make dir ${dir.magenta} successfully`);
-        } else throw ['processMkdir', dir, data];
+        } else throw ['processMkdir', dir, dasta];
       }
     }
 
@@ -219,7 +229,7 @@ hexo.extend.deployer.register('upyun', async function (args) {
 
         let fileContent = await fs.readFileAsync(path.resolve(public_dir, file));
 
-        let data = await upyun.putFileAsync(file, fileContent, mimeType, true, null);
+        let data = await upyun.putFileAsync(transformPath(file), fileContent, mimeType, true, null);
         if (data.statusCode === 200) {
           console.log('INFO '.green + ` Put file ${file.magenta} successfully`);
         } else throw ['processPut', file, data];
